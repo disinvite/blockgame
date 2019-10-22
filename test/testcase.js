@@ -51,6 +51,40 @@ AA..
 ....
 `;
 
+const stacked_shapes_cant_move = `
+....
+.BBB
+AA..
+. ..
+`;
+
+const stacked_shapes_cant_move_bottom = `
+...
+.BB
+AA.
+`;
+
+const stacked_shapes_cant_move_hook = `
+CCC..
+AAC..
+ABC..
+. C..
+.....
+`;
+
+const stacked_shapes_try_to_break_it = `
+AABB
+ABB 
+A...
+....
+`;
+
+const shape_tetris_cant_move = `
+.AA
+AA 
+...
+`;
+
 module.exports = {
  step_down_simple_before,
  step_down_simple_after,
@@ -60,6 +94,11 @@ module.exports = {
  shape_simple_before,
  shape_simple_after,
  two_shapes_before,
- two_shapes_after
+ two_shapes_after,
+ stacked_shapes_cant_move,
+ stacked_shapes_cant_move_bottom,
+ stacked_shapes_cant_move_hook,
+ stacked_shapes_try_to_break_it,
+ shape_tetris_cant_move
 };
 

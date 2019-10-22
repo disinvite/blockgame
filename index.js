@@ -22,7 +22,7 @@ $...=
 //const x = new LEVEL(l1);
 //console.log(x.tiles);
 
-const x = new LEVEL(testcase.two_shapes_before);
+const x = new LEVEL(testcase.stacked_shapes_try_to_break_it);
 console.log(`\nBEFORE:\n${x}`);
 x.stepDown();
 
