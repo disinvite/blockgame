@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style type="text/css">
+    html, body {
+      background-color: #222;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+<canvas id="c" width="512" height="480"></canvas>
+<script src="../lib/level.js"></script>
+<script src="../lib/nescolors.js"></script>
+<script>
+  const colorMap = {
+    '#': NESCOLORS[3],
+    ' ': NESCOLORS[4],
+    '$': NESCOLORS[9]
+  };
+
+  class GRAPHICS {
+    constructor() {
+      const canvas = document.getElementById('c');
+      this.ctx = canvas.getContext('2d');
+      this.ctx.scale(2, 2);
+    }
+    go() {
+      this.ctx.fillStyle = NESCOLORS[12];
+      this.ctx.fillRect(0,0,256,240);
+    }
+    draw(level) {
+      const levelSize = level.tiles.length;
+      for (let row = 0; row < levelSize; row++) {
+        for (let col = 0; col < levelSize; col++) {
+          const tile = level.tiles[row][col];
+          this.ctx.fillStyle = colorMap[tile];
+          this.ctx.fillRect(64 + (col*16),64 + (row*16),16,16); 
+        }
+      }
+    }
+  };
+
+  window.onload = () => {
+    const s = [
+      '#  #',
+      '## #',
+      '#$ #',
+      '####'
+    ];
+
+    const l = new LEVEL(s.join('\n'));
+    const g = new GRAPHICS();
+    g.go();
+    g.draw(l);
+  };
+</script>
+</body>
+</html>
