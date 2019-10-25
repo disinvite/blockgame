@@ -14,9 +14,9 @@
 <script src="../lib/nescolors.js"></script>
 <script>
   const colorMap = {
-    '#': NESCOLORS[3],
-    ' ': NESCOLORS[4],
-    '$': NESCOLORS[9]
+    ' ': NESCOLORS[3],
+    '$': NESCOLORS[9],
+    '.': NESCOLORS[4]
   };
 
   class GRAPHICS {
@@ -41,18 +41,50 @@
     }
   };
 
+  window.pushUp = () => {
+    this.l.rotateClockwise();
+    this.l.rotateClockwise();
+    this.l.stepDown();
+    this.l.rotateClockwise();
+    this.l.rotateClockwise();
+    this.g.draw(l);
+  }
+
+  window.pushLeft = () => {
+    this.l.rotateClockwise();
+    this.l.rotateClockwise();
+    this.l.rotateClockwise();
+    this.l.stepDown();
+    this.l.rotateClockwise();
+    this.g.draw(l);
+  }
+
+  window.pushRight = () => {
+    this.l.rotateClockwise();
+    this.l.stepDown();
+    this.l.rotateClockwise();
+    this.l.rotateClockwise();
+    this.l.rotateClockwise();
+    this.g.draw(l);
+  }
+
+  window.pushDown = () => {
+    this.l.stepDown();
+    this.g.draw(l);
+  }
+
   window.onload = () => {
     const s = [
-      '#  #',
-      '## #',
-      '#$ #',
-      '####'
+      '....',
+      '....',
+      '.$. ',
+      '... '
     ];
 
-    const l = new LEVEL(s.join('\n'));
-    const g = new GRAPHICS();
-    g.go();
-    g.draw(l);
+    this.l = new LEVEL(s.join('\n'));
+    this.g = new GRAPHICS();
+    this.g.go();
+    this.g.draw(l);
   };
 </script>
 </body>
