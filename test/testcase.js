@@ -85,6 +85,30 @@ AA
 ...
 `;
 
+const rotate_position_one = `
+ABC
+DEF
+GHI
+`;
+
+const rotate_position_two = `
+GDA
+HEB
+IFC
+`;
+
+const rotate_position_three = `
+IHG
+FED
+CBA
+`;
+
+const rotate_position_four = `
+CFI
+BEH
+ADG
+`;
+
 module.exports = {
  step_down_simple_before,
  step_down_simple_after,
@@ -99,6 +123,10 @@ module.exports = {
  stacked_shapes_cant_move_bottom,
  stacked_shapes_cant_move_hook,
  stacked_shapes_try_to_break_it,
- shape_tetris_cant_move
+ shape_tetris_cant_move,
+ rotate_position_one,
+ rotate_position_two,
+ rotate_position_three,
+ rotate_position_four
 };
 

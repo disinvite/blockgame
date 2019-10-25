@@ -81,3 +81,43 @@ describe('steps', () => {
   });
 
 });
+
+describe('rotate', () => {
+  it('should work for clockwise rotation', () => {
+    const stages = [
+      testcase.rotate_position_one,
+      testcase.rotate_position_two,
+      testcase.rotate_position_three,
+      testcase.rotate_position_four,
+    ].map(x => new LEVEL(x));
+    const x = new LEVEL(testcase.rotate_position_one);
+    x.rotateClockwise();
+    console.log(x.toString());
+    console.log(stages[1].toString());
+    assert.ok(x.toString() === stages[1].toString());
+    x.rotateClockwise();
+    assert.ok(x.toString() === stages[2].toString());
+    x.rotateClockwise();
+    assert.ok(x.toString() === stages[3].toString());
+    x.rotateClockwise();
+    assert.ok(x.toString() === stages[0].toString());
+  });
+
+  it('should work for counter-clockwise rotation', () => {
+    const stages = [
+      testcase.rotate_position_one,
+      testcase.rotate_position_two,
+      testcase.rotate_position_three,
+      testcase.rotate_position_four,
+    ].map(x => new LEVEL(x));
+    const x = new LEVEL(testcase.rotate_position_one);
+    x.rotateCounterClockwise();
+    assert.ok(x.toString() === stages[3].toString());
+    x.rotateCounterClockwise();
+    assert.ok(x.toString() === stages[2].toString());
+    x.rotateCounterClockwise();
+    assert.ok(x.toString() === stages[1].toString());
+    x.rotateCounterClockwise();
+    assert.ok(x.toString() === stages[0].toString());
+  });
+});
