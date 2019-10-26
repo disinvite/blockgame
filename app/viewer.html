@@ -9,14 +9,23 @@
   </style>
 </head>
 <body>
-<canvas id="c" width="512" height="480"></canvas>
+<div style="float:left;">
+  <canvas id="c" width="512" height="480"></canvas>
+</div>
+<div style="float:left; text-align:center;">
+  <button onclick="window.pushUp()">Up</button><br/>
+  <button onclick="window.pushLeft()">Left</button>
+  <button onclick="window.pushRight()">Right</button><br/>
+  <button onclick="window.pushDown()">Down</button>
+</div>
 <script src="../lib/level.js"></script>
 <script src="../lib/nescolors.js"></script>
 <script>
   const colorMap = {
-    ' ': NESCOLORS[3],
+    ' ': NESCOLORS[12],
     '$': NESCOLORS[9],
-    '.': NESCOLORS[4]
+    '.': NESCOLORS[4],
+    '=': NESCOLORS[1]
   };
 
   class GRAPHICS {
@@ -75,8 +84,8 @@
 
   window.onload = () => {
     const s = [
-      '....',
-      '....',
+      ' ..=',
+      '... ',
       '.$. ',
       '... '
     ];
