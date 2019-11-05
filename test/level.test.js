@@ -92,8 +92,6 @@ describe('rotate', () => {
     ].map(x => new LEVEL(x));
     const x = new LEVEL(testcase.rotate_position_one);
     x.rotateClockwise();
-    console.log(x.toString());
-    console.log(stages[1].toString());
     assert.ok(x.toString() === stages[1].toString());
     x.rotateClockwise();
     assert.ok(x.toString() === stages[2].toString());
@@ -119,5 +117,36 @@ describe('rotate', () => {
     assert.ok(x.toString() === stages[1].toString());
     x.rotateCounterClockwise();
     assert.ok(x.toString() === stages[0].toString());
+  });
+});
+
+describe('goal', () => {
+  it('should count the number of diamonds', () => {
+    const x = new LEVEL(testcase.step_down_two_items_before);
+    assert.equal(x.diamonds, 2);
+  });
+
+  it('should remove diamonds that go in the goal', () => {
+    const x = new LEVEL(testcase.goal_test_before);
+    assert.equal(x.diamonds, 1);
+    x.stepDown();
+    const y = new LEVEL(testcase.goal_test_after);
+    assert.ok(x.toString() === y.toString());
+  });
+
+  it('should not remove blocks that go in the goal', () => {
+    const x = new LEVEL(testcase.goal_blocks_cant_before);
+    x.stepDown();
+    const y = new LEVEL(testcase.goal_blocks_cant_after);
+    assert.ok(x.toString() === y.toString());
+
+    x.rotateClockwise(); //meh
+    x.rotateClockwise();
+    x.stepDown();
+    x.rotateClockwise();
+    x.rotateClockwise();
+
+    const z = new LEVEL(testcase.goal_blocks_cant_before);
+    assert.ok(x.toString() === z.toString());
   });
 });

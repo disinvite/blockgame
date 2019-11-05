@@ -109,6 +109,26 @@ BEH
 ADG
 `;
 
+const goal_test_before = `
+$.
+^.
+`;
+
+const goal_test_after = `
+..
+^.
+`;
+
+const goal_blocks_cant_before = `
+A.
+^.
+`;
+
+const goal_blocks_cant_after = `
+..
+A.
+`;
+
 module.exports = {
  step_down_simple_before,
  step_down_simple_after,
@@ -127,6 +147,10 @@ module.exports = {
  rotate_position_one,
  rotate_position_two,
  rotate_position_three,
- rotate_position_four
+ rotate_position_four,
+ goal_test_before,
+ goal_test_after,
+ goal_blocks_cant_before,
+ goal_blocks_cant_after
 };
 
