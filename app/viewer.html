@@ -24,9 +24,37 @@
   const colorMap = {
     ' ': NESCOLORS[12],
     '$': NESCOLORS[9],
-    '.': NESCOLORS[4],
-    '=': NESCOLORS[1]
+    '.': NESCOLORS[15],
+    '^': NESCOLORS[1],
+    'A': NESCOLORS[28]
   };
+
+  // taken from colorthing
+  function undoHex(hexChr) {
+    const arrayOut = [];
+
+    for(let i = 0; i < 32; i+= 4) {
+      const piece = hexChr.slice(i, i + 4);
+      const binary = parseInt(piece,16).toString(2).padStart(16,'0');
+      for(let j = 0; j < 16; j += 2) {
+        const twobit = binary.slice(j, j + 2);
+        arrayOut.push(parseInt(twobit,2));
+      }
+    }
+
+    return arrayOut;
+  }
+
+  const palette = [13, 10, 26, 42];
+  const blockTopLeft = '15557eaa755565556555651565656555';
+  const blockTopRight = '5554a6bd555d55595559555555595559';
+  const blockBottomLeft = '65556555655565556555555514040000';
+  const blockBottomRight = '55555551555155545540551040440000';
+  const blockTopCenter = '5555ab56555555555555555555555555';
+  const blockBottomCenter = '55555555555555555555555515040000';
+  const blockRightCenter = '55555555555d55595559555555595559';
+  const blockInterior = '55555555555555555555555555555555';
+  const blockLeftCenter = '65556555755565556555655565556555';
 
   class GRAPHICS {
     constructor() {
@@ -38,13 +66,51 @@
       this.ctx.fillStyle = NESCOLORS[12];
       this.ctx.fillRect(0,0,256,240);
     }
+    drawSprite(which, x, y) {
+      const spriteArr = undoHex(which);
+
+      for (let tx = 0; tx < 8; tx++) {
+        for (let ty = 0; ty < 8; ty++) {
+          const whichColor = spriteArr[(ty * 8) + tx];
+          this.ctx.fillStyle = NESCOLORS[palette[whichColor]];
+          this.ctx.fillRect(x + tx, y + ty, 1, 1);
+        }
+      }
+    }
     draw(level) {
       const levelSize = level.tiles.length;
+      let howManyA = 0;
+
       for (let row = 0; row < levelSize; row++) {
         for (let col = 0; col < levelSize; col++) {
           const tile = level.tiles[row][col];
           this.ctx.fillStyle = colorMap[tile];
-          this.ctx.fillRect(64 + (col*16),64 + (row*16),16,16); 
+          this.ctx.fillRect(64 + (col*16),64 + (row*16),16,16);
+          if (tile === 'A') {
+            howManyA++;
+            if (howManyA === 2) {
+              this.drawSprite(blockTopLeft, 64 + (col*16), 64 + (row*16));
+              this.drawSprite(blockTopCenter, 64 + 8 + (col*16), 64 + (row*16));
+              this.drawSprite(blockBottomLeft, 64 + (col*16), 64 + 8 + (row*16));
+              this.drawSprite(blockBottomCenter, 64 + 8 + (col*16), 64 + 8 + (row*16));
+            } else if (howManyA === 3) {
+              this.drawSprite(blockInterior, 64 + (col*16), 64 + (row*16));
+              this.drawSprite(blockRightCenter, 64 + 8 + (col*16), 64 + (row*16));
+              this.drawSprite(blockBottomCenter, 64 + (col*16), 64 + 8 + (row*16));
+              this.drawSprite(blockBottomRight, 64 + 8 + (col*16), 64 + 8 + (row*16));
+            } else {
+              this.drawSprite(blockTopLeft, 64 + (col*16), 64 + (row*16));
+              this.drawSprite(blockTopRight, 64 + 8 + (col*16), 64 + (row*16));
+              this.drawSprite(blockLeftCenter, 64 + (col*16), 64 + 8 + (row*16));
+              this.drawSprite(blockRightCenter, 64 + 8 + (col*16), 64 + 8 + (row*16));
+            }
+          } else if (tile === 'B') {
+            // single block
+            this.drawSprite(blockTopLeft, 64 + (col*16), 64 + (row*16));
+            this.drawSprite(blockTopRight, 64 + 8 + (col*16), 64 + (row*16));
+            this.drawSprite(blockBottomLeft, 64 + (col*16), 64 + 8 + (row*16));
+            this.drawSprite(blockBottomRight, 64 + 8 + (col*16), 64 + 8 + (row*16));
+          }
         }
       }
     }
@@ -84,10 +150,11 @@
 
   window.onload = () => {
     const s = [
-      ' ..=',
-      '... ',
-      '.$. ',
-      '... '
+      ' . A^',
+      '..AA ',
+      '..$. ',
+      '.... ',
+      'B... '
     ];
 
     this.l = new LEVEL(s.join('\n'));
