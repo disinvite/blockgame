@@ -51,6 +51,13 @@ AA..
 ....
 `;
 
+const two_shapes_after_slide = `
+AA..
+ ...
+....
+..BB
+`;
+
 const stacked_shapes_cant_move = `
 ....
 .BBB
@@ -139,6 +146,7 @@ module.exports = {
  shape_simple_after,
  two_shapes_before,
  two_shapes_after,
+ two_shapes_after_slide,
  stacked_shapes_cant_move,
  stacked_shapes_cant_move_bottom,
  stacked_shapes_cant_move_hook,

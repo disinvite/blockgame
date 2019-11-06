@@ -117,34 +117,22 @@
   };
 
   window.pushUp = () => {
-    this.l.rotateClockwise();
-    this.l.rotateClockwise();
-    this.l.stepDown();
-    this.l.rotateClockwise();
-    this.l.rotateClockwise();
+    this.l.slideUp();
     this.g.draw(l);
   }
 
   window.pushLeft = () => {
-    this.l.rotateClockwise();
-    this.l.rotateClockwise();
-    this.l.rotateClockwise();
-    this.l.stepDown();
-    this.l.rotateClockwise();
+    this.l.slideLeft();
     this.g.draw(l);
   }
 
   window.pushRight = () => {
-    this.l.rotateClockwise();
-    this.l.stepDown();
-    this.l.rotateClockwise();
-    this.l.rotateClockwise();
-    this.l.rotateClockwise();
+    this.l.slideRight();
     this.g.draw(l);
   }
 
   window.pushDown = () => {
-    this.l.stepDown();
+    this.l.slideDown();
     this.g.draw(l);
   }
 

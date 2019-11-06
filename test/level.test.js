@@ -120,6 +120,15 @@ describe('rotate', () => {
   });
 });
 
+describe('slides', () => {
+  it('should work for the simple case', () => {
+    const x = new LEVEL(testcase.two_shapes_before);
+    x.slideDown();
+    const y = new LEVEL(testcase.two_shapes_after_slide);
+    assert.ok(x.toString() === y.toString());
+  });
+});
+
 describe('goal', () => {
   it('should count the number of diamonds', () => {
     const x = new LEVEL(testcase.step_down_two_items_before);
