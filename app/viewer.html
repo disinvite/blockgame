@@ -86,7 +86,71 @@
           const tile = level.tiles[row][col];
           this.ctx.fillStyle = colorMap[tile];
           this.ctx.fillRect(64 + (col*16),64 + (row*16),16,16);
-          if (tile === 'A') {
+          if ((tile === 'A') || (tile === 'B') || (tile === 'C')) {
+            const metaInfo = level.metasprites[row][col].split('~')[1];
+
+            // idiomatic, yes. but also idiotic
+            const hasU = (metaInfo.indexOf('U') !== -1);
+            const hasD = (metaInfo.indexOf('D') !== -1);
+            const hasL = (metaInfo.indexOf('L') !== -1);
+            const hasR = (metaInfo.indexOf('R') !== -1);
+            
+            let sprTopLeft = '';
+            let sprTopRight = '';
+            let sprBottomLeft = '';
+            let sprBottomRight = '';
+
+            // top left
+            if(hasU && hasL) {
+              sprTopLeft = blockTopLeft;
+            } else if (!hasU && hasL) {
+              sprTopLeft = blockLeftCenter;
+            } else if (hasU && !hasL) {
+              sprTopLeft = blockTopCenter;
+            } else {
+              sprTopLeft = blockInterior;
+            }
+
+            // top right
+            if(hasU && hasR) {
+              sprTopRight = blockTopRight;
+            } else if (!hasU && hasR) {
+              sprTopRight = blockRightCenter;
+            } else if (hasU && !hasR) {
+              sprTopRight = blockTopCenter;
+            } else {
+              sprTopRight = blockInterior;
+            }
+
+            // bottom left
+            if(hasD && hasL) {
+              sprBottomLeft = blockBottomLeft;
+            } else if (!hasD && hasL) {
+              sprBottomLeft = blockLeftCenter;
+            } else if (hasD && !hasL) {
+              sprBottomLeft = blockBottomCenter;
+            } else {
+              sprBottomLeft = blockInterior;
+            }
+
+            // bottom right
+            if(hasD && hasR) {
+              sprBottomRight = blockBottomRight;
+            } else if (!hasD && hasR) {
+              sprBottomRight = blockRightCenter;
+            } else if (hasD && !hasR) {
+              sprBottomRight = blockBottomCenter;
+            } else {
+              sprBottomRight = blockInterior;
+            }
+
+            this.drawSprite(sprTopLeft, 64 + (col*16), 64 + (row*16));
+            this.drawSprite(sprTopRight, 64 + 8 + (col*16), 64 + (row*16));
+            this.drawSprite(sprBottomLeft, 64 + (col*16), 64 + 8 + (row*16));
+            this.drawSprite(sprBottomRight, 64 + 8 + (col*16), 64 + 8 + (row*16));
+          }
+
+          /*
             howManyA++;
             if (howManyA === 2) {
               this.drawSprite(blockTopLeft, 64 + (col*16), 64 + (row*16));
@@ -111,6 +175,7 @@
             this.drawSprite(blockBottomLeft, 64 + (col*16), 64 + 8 + (row*16));
             this.drawSprite(blockBottomRight, 64 + 8 + (col*16), 64 + 8 + (row*16));
           }
+          */
         }
       }
     }
