@@ -6,6 +6,10 @@
       background-color: #222;
       margin: 0;
     }
+    pre {
+      background-color: white;
+      color: black;
+    }
   </style>
 </head>
 <body>
@@ -17,6 +21,9 @@
   <button onclick="window.pushLeft()">Left</button>
   <button onclick="window.pushRight()">Right</button><br/>
   <button onclick="window.pushDown()">Down</button>
+</div>
+<div style="float:left; padding: 20px; background-color: white;">
+  <pre id="debug"></pre>
 </div>
 <script src="../lib/level.js"></script>
 <script src="../lib/nescolors.js"></script>
@@ -77,7 +84,14 @@
         }
       }
     }
+    debug(level) {
+      const debugEl = document.getElementById('debug');
+      let deText = 'LEVEL\n~~~~~\n\n' + level.tiles.map(x => x.map(y => y.padEnd(6, ' ')).join(' | ')).join('\n');
+      deText += '\n\n\n\nMETASPRITES\n~~~~~~~~~~~\n\n' + level.metasprites.map(x => x.map(y => y.padEnd(6, ' ')).join(' | ')).join('\n');
+      debugEl.innerHTML = deText;
+    }
     draw(level) {
+      this.debug(level);
       const levelSize = level.tiles.length;
       let howManyA = 0;
 
@@ -149,33 +163,6 @@
             this.drawSprite(sprBottomLeft, 64 + (col*16), 64 + 8 + (row*16));
             this.drawSprite(sprBottomRight, 64 + 8 + (col*16), 64 + 8 + (row*16));
           }
-
-          /*
-            howManyA++;
-            if (howManyA === 2) {
-              this.drawSprite(blockTopLeft, 64 + (col*16), 64 + (row*16));
-              this.drawSprite(blockTopCenter, 64 + 8 + (col*16), 64 + (row*16));
-              this.drawSprite(blockBottomLeft, 64 + (col*16), 64 + 8 + (row*16));
-              this.drawSprite(blockBottomCenter, 64 + 8 + (col*16), 64 + 8 + (row*16));
-            } else if (howManyA === 3) {
-              this.drawSprite(blockInterior, 64 + (col*16), 64 + (row*16));
-              this.drawSprite(blockRightCenter, 64 + 8 + (col*16), 64 + (row*16));
-              this.drawSprite(blockBottomCenter, 64 + (col*16), 64 + 8 + (row*16));
-              this.drawSprite(blockBottomRight, 64 + 8 + (col*16), 64 + 8 + (row*16));
-            } else {
-              this.drawSprite(blockTopLeft, 64 + (col*16), 64 + (row*16));
-              this.drawSprite(blockTopRight, 64 + 8 + (col*16), 64 + (row*16));
-              this.drawSprite(blockLeftCenter, 64 + (col*16), 64 + 8 + (row*16));
-              this.drawSprite(blockRightCenter, 64 + 8 + (col*16), 64 + 8 + (row*16));
-            }
-          } else if ((tile === 'B') || (tile === 'C')) {
-            // single block
-            this.drawSprite(blockTopLeft, 64 + (col*16), 64 + (row*16));
-            this.drawSprite(blockTopRight, 64 + 8 + (col*16), 64 + (row*16));
-            this.drawSprite(blockBottomLeft, 64 + (col*16), 64 + 8 + (row*16));
-            this.drawSprite(blockBottomRight, 64 + 8 + (col*16), 64 + 8 + (row*16));
-          }
-          */
         }
       }
     }
@@ -204,7 +191,7 @@
   window.onload = () => {
     const s = [
       ' . A^',
-      '..AA ',
+      '.... ',
       '.C$. ',
       '.C.. ',
       'B    '
