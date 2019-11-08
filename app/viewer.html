@@ -63,6 +63,15 @@
   const blockInterior = '55555555555555555555555555555555';
   const blockLeftCenter = '65556555755565556555655565556555';
 
+  const letterL = 'a000a400a400a400a400a400aaa81555';
+  const letterE = 'aaa8a555a400aaa8a555a400aaa81555';
+  const letterV = 'a028a429a429a8a92aa50a9402500040';
+  const letterM = 'a028a8a9aaa9aaa9a669a469a4291415';
+  const letterO = '2aa0a568a429a429a429a4292aa50554';
+  const letterS = '2aa0a568a4052aa00568a0292aa50554';
+  const letterI = '2aa8029502900290029002902aa80555';
+  const letterT = '2aa80295029002900290029002900050';
+
   class GRAPHICS {
     constructor() {
       const canvas = document.getElementById('c');
@@ -95,11 +104,39 @@
       const levelSize = level.tiles.length;
       let howManyA = 0;
 
+      // status bar
+      this.ctx.fillStyle = '#000000';
+      this.ctx.fillRect(192,0,64,240);
+
+      this.drawSprite(letterL, 200,64);
+      this.drawSprite(letterE, 208,64);
+      this.drawSprite(letterV, 216,64);
+      this.drawSprite(letterE, 224,64);
+      this.drawSprite(letterL, 232,64);
+
+      this.drawSprite(letterO, 232,80);
+
+      this.drawSprite(letterM, 200,104);
+      this.drawSprite(letterO, 208,104);
+      this.drawSprite(letterV, 216,104);
+      this.drawSprite(letterE, 224,104);
+      this.drawSprite(letterS, 232,104);
+
+      this.drawSprite(letterO, 232,120);
+
+      this.drawSprite(letterI, 200,144);
+      this.drawSprite(letterT, 208,144);
+      this.drawSprite(letterE, 216,144);
+      this.drawSprite(letterM, 224,144);
+      this.drawSprite(letterS, 232,144);
+
+      this.drawSprite(letterO, 232,160);
+
       for (let row = 0; row < levelSize; row++) {
         for (let col = 0; col < levelSize; col++) {
           const tile = level.tiles[row][col];
           this.ctx.fillStyle = colorMap[tile];
-          this.ctx.fillRect(64 + (col*16),64 + (row*16),16,16);
+          this.ctx.fillRect(16 + (col*16),32 + (row*16),16,16);
           if ((tile === 'A') || (tile === 'B') || (tile === 'C')) {
             const metaInfo = level.metasprites[row][col].split('~')[1];
 
@@ -158,10 +195,10 @@
               sprBottomRight = blockInterior;
             }
 
-            this.drawSprite(sprTopLeft, 64 + (col*16), 64 + (row*16));
-            this.drawSprite(sprTopRight, 64 + 8 + (col*16), 64 + (row*16));
-            this.drawSprite(sprBottomLeft, 64 + (col*16), 64 + 8 + (row*16));
-            this.drawSprite(sprBottomRight, 64 + 8 + (col*16), 64 + 8 + (row*16));
+            this.drawSprite(sprTopLeft, 16 + (col*16), 32 + (row*16));
+            this.drawSprite(sprTopRight, 16 + 8 + (col*16), 32 + (row*16));
+            this.drawSprite(sprBottomLeft, 16 + (col*16), 32 + 8 + (row*16));
+            this.drawSprite(sprBottomRight, 16 + 8 + (col*16), 32 + 8 + (row*16));
           }
         }
       }
@@ -190,11 +227,16 @@
 
   window.onload = () => {
     const s = [
-      ' . A^',
-      '.... ',
-      '.C$. ',
-      '.C.. ',
-      'B    '
+      '..... . A^',
+      '......... ',
+      '......C$. ',
+      '......C.. ',
+      '.....B    ',
+      '..........',
+      '..........',
+      '..........',
+      '..........',
+      '..........',
     ];
 
     this.l = new LEVEL(s.join('\n'));
