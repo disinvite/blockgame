@@ -28,14 +28,6 @@
 <script src="../lib/level.js"></script>
 <script src="../lib/nescolors.js"></script>
 <script>
-  const colorMap = {
-    ' ': NESCOLORS[12],
-    '$': NESCOLORS[9],
-    '.': NESCOLORS[15],
-    '^': NESCOLORS[1],
-    'A': NESCOLORS[28]
-  };
-
   // taken from colorthing
   function undoHex(hexChr) {
     const arrayOut = [];
@@ -52,7 +44,14 @@
     return arrayOut;
   }
 
-  const palette = [13, 10, 26, 42];
+  const palette  = [13, 10, 26, 42];
+  const palette2 = [13, 3, 19, 35];
+  
+  const blackTile = '00000000000000000000000000000000';
+  const oneTile = '55555555555555555555555555555555';
+  const twoTile = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+  const threeTile = 'ffffffffffffffffffffffffffffffff';
+
   const blockTopLeft = '15557eaa755565556555651565656555';
   const blockTopRight = '5554a6bd555d55595559555555595559';
   const blockBottomLeft = '65556555655565556555555514040000';
@@ -72,26 +71,106 @@
   const letterI = '2aa8029502900290029002902aa80555';
   const letterT = '2aa80295029002900290029002900050';
 
-  class GRAPHICS {
+  const PATTERNTABLE = [
+    blackTile,
+    oneTile,
+    twoTile,
+    threeTile,
+    blockTopLeft,
+    blockTopRight,
+    blockBottomLeft,
+    blockBottomRight,
+    blockTopCenter,
+    blockBottomCenter,
+    blockRightCenter,
+    blockInterior,
+    blockLeftCenter,
+    letterL,
+    letterE,
+    letterV,
+    letterM,
+    letterO,
+    letterS,
+    letterI,
+    letterT
+  ];
+
+  class DISPLAY {
     constructor() {
       const canvas = document.getElementById('c');
       this.ctx = canvas.getContext('2d');
       this.ctx.scale(2, 2);
-    }
-    go() {
-      this.ctx.fillStyle = NESCOLORS[12];
+      this.ctx.imageSmoothingEnabled = false;
+      
+      // stored in the format from the "colorthing" program
+      this.patterntable = new Array(256);
+
+      // (960) characters in 30x32 array + (64) attribute table in 15x16 array
+      this.characters = new Array(960).fill(0);
+      this.attributes = new Array(240).fill(0);
+      this.palettes = new Array(4);
+
+      // ImageBitmap cache
+      this.cache = {};
+
+      this.offscreen = new OffscreenCanvas(8, 8); //document.createElement('canvas');
+
+      // black screen
+      this.ctx.fillStyle = '#000000';
       this.ctx.fillRect(0,0,256,240);
     }
-    drawSprite(which, x, y) {
+    setAttribute(x, y, which) {
+      this.attributes[(y * 16) + x] = which;
+    }
+    setNametable(x, y, which) {
+      this.characters[(y * 32) + x] = which;
+    }
+    addToCache(which, pal) {
       const spriteArr = undoHex(which);
+      const id = `${which},${pal}`;
+      const offscreenCtx = this.offscreen.getContext('2d');
+
+      offscreenCtx.fillStyle = '#000000';
+      offscreenCtx.fillRect(0, 0, 8, 8);
 
       for (let tx = 0; tx < 8; tx++) {
         for (let ty = 0; ty < 8; ty++) {
           const whichColor = spriteArr[(ty * 8) + tx];
-          this.ctx.fillStyle = NESCOLORS[palette[whichColor]];
-          this.ctx.fillRect(x + tx, y + ty, 1, 1);
+          offscreenCtx.fillStyle = NESCOLORS[pal[whichColor]];
+          offscreenCtx.fillRect(tx, ty, 1, 1);
         }
       }
+
+      this.cache[id] = this.offscreen.transferToImageBitmap();
+    }
+    drawSprite(x, y, which, pal) {
+      const id = `${which},${pal}`;
+      if (!(id in this.cache)) {
+        this.addToCache(which, pal);
+      }
+
+      this.ctx.drawImage(this.cache[id], x, y, 8, 8);
+    }
+    draw() {
+      for (let row = 0; row < 30; row++) {
+        for (let col = 0; col < 32; col++) {
+          const char = (row * 32) + col;
+          const attr = (Math.floor(row / 2.0) * 16) + Math.floor(col / 2.0);
+
+          const sprite = this.patterntable[this.characters[char]];
+          const pal = this.palettes[this.attributes[attr]];
+          this.drawSprite(col * 8, row * 8, sprite, pal);
+        }
+      }
+    }
+  }
+
+  class GRAPHICS {
+    constructor() {
+      this.display = new DISPLAY();
+      this.display.palettes = [palette, palette2, palette, palette];
+      this.display.patterntable = PATTERNTABLE;
+      this.setup();
     }
     debug(level) {
       const debugEl = document.getElementById('debug');
@@ -99,44 +178,59 @@
       deText += '\n\n\n\nMETASPRITES\n~~~~~~~~~~~\n\n' + level.metasprites.map(x => x.map(y => y.padEnd(6, ' ')).join(' | ')).join('\n');
       debugEl.innerHTML = deText;
     }
+    // called once.
+    setup() {
+      for (let i = 0; i < 24; i++) {
+        for (let j = 0; j < 30; j++) {
+          this.display.setNametable(i, j, PATTERNTABLE.indexOf(twoTile));
+        }
+      }
+
+      for (let i = 24; i < 32; i++) {
+        for (let j = 0; j < 30; j++) {
+          // 0 = blackTile
+          this.display.setNametable(i, j, PATTERNTABLE.indexOf(blackTile));
+        }
+      }
+
+      this.display.setNametable(25, 8, PATTERNTABLE.indexOf(letterL));
+      this.display.setNametable(26, 8, PATTERNTABLE.indexOf(letterE));
+      this.display.setNametable(27, 8, PATTERNTABLE.indexOf(letterV));
+      this.display.setNametable(28, 8, PATTERNTABLE.indexOf(letterE));
+      this.display.setNametable(29, 8, PATTERNTABLE.indexOf(letterL));
+
+      this.display.setNametable(29, 10, PATTERNTABLE.indexOf(letterO));
+
+      this.display.setNametable(25, 13, PATTERNTABLE.indexOf(letterM));
+      this.display.setNametable(26, 13, PATTERNTABLE.indexOf(letterO));
+      this.display.setNametable(27, 13, PATTERNTABLE.indexOf(letterV));
+      this.display.setNametable(28, 13, PATTERNTABLE.indexOf(letterE));
+      this.display.setNametable(29, 13, PATTERNTABLE.indexOf(letterS));
+
+      this.display.setNametable(29, 15, PATTERNTABLE.indexOf(letterO));
+
+      this.display.setNametable(25, 18, PATTERNTABLE.indexOf(letterI));
+      this.display.setNametable(26, 18, PATTERNTABLE.indexOf(letterT));
+      this.display.setNametable(27, 18, PATTERNTABLE.indexOf(letterE));
+      this.display.setNametable(28, 18, PATTERNTABLE.indexOf(letterM));
+      this.display.setNametable(29, 18, PATTERNTABLE.indexOf(letterS));
+
+      this.display.setNametable(29, 20, PATTERNTABLE.indexOf(letterO));
+
+      for (let i = 12; i < 15; i++) {
+        for (let j = 4; j < 11; j++) {
+          this.display.setAttribute(i, j, 1);
+        }
+      }
+    }
     draw(level) {
       this.debug(level);
-      const levelSize = level.tiles.length;
-      let howManyA = 0;
-
-      // status bar
-      this.ctx.fillStyle = '#000000';
-      this.ctx.fillRect(192,0,64,240);
-
-      this.drawSprite(letterL, 200,64);
-      this.drawSprite(letterE, 208,64);
-      this.drawSprite(letterV, 216,64);
-      this.drawSprite(letterE, 224,64);
-      this.drawSprite(letterL, 232,64);
-
-      this.drawSprite(letterO, 232,80);
-
-      this.drawSprite(letterM, 200,104);
-      this.drawSprite(letterO, 208,104);
-      this.drawSprite(letterV, 216,104);
-      this.drawSprite(letterE, 224,104);
-      this.drawSprite(letterS, 232,104);
-
-      this.drawSprite(letterO, 232,120);
-
-      this.drawSprite(letterI, 200,144);
-      this.drawSprite(letterT, 208,144);
-      this.drawSprite(letterE, 216,144);
-      this.drawSprite(letterM, 224,144);
-      this.drawSprite(letterS, 232,144);
-
-      this.drawSprite(letterO, 232,160);
+      const levelSize = level.dim;
 
       for (let row = 0; row < levelSize; row++) {
         for (let col = 0; col < levelSize; col++) {
           const tile = level.tiles[row][col];
-          this.ctx.fillStyle = colorMap[tile];
-          this.ctx.fillRect(16 + (col*16),32 + (row*16),16,16);
+
           if ((tile === 'A') || (tile === 'B') || (tile === 'C')) {
             const metaInfo = level.metasprites[row][col].split('~')[1];
 
@@ -195,13 +289,32 @@
               sprBottomRight = blockInterior;
             }
 
-            this.drawSprite(sprTopLeft, 16 + (col*16), 32 + (row*16));
-            this.drawSprite(sprTopRight, 16 + 8 + (col*16), 32 + (row*16));
-            this.drawSprite(sprBottomLeft, 16 + (col*16), 32 + 8 + (row*16));
-            this.drawSprite(sprBottomRight, 16 + 8 + (col*16), 32 + 8 + (row*16));
+            this.display.setNametable(2 + (2*col), 4 + (2*row), PATTERNTABLE.indexOf(sprTopLeft));
+            this.display.setNametable(2 + 1 + (2*col), 4 + (2*row), PATTERNTABLE.indexOf(sprTopRight));
+            this.display.setNametable(2 + (2 * col), 4 + 1 + (2*row), PATTERNTABLE.indexOf(sprBottomLeft));
+            this.display.setNametable(2 + 1 + (2*col), 4 + 1 + (2*row),  PATTERNTABLE.indexOf(sprBottomRight));
+            this.display.setAttribute(1 + col, 2 + row, 1);
+
+          } else {
+            let xTile = '';
+            if (tile === '$') {
+              xTile = PATTERNTABLE.indexOf(threeTile);
+            } else if (tile === '.') {
+              xTile = PATTERNTABLE.indexOf(blackTile);
+            } else {
+              xTile = PATTERNTABLE.indexOf(twoTile);
+            }
+
+            this.display.setNametable(2 + (2*col), 4 + (2*row), xTile);
+            this.display.setNametable(2 + 1 + (2*col), 4 + (2*row), xTile);
+            this.display.setNametable(2 + (2 * col), 4 + 1 + (2*row), xTile);
+            this.display.setNametable(2 + 1 + (2*col), 4 + 1 + (2*row), xTile);
+            this.display.setAttribute(1 + col, 2 + row, 0);
           }
         }
       }
+
+      this.display.draw();
     }
   };
 
@@ -241,7 +354,6 @@
 
     this.l = new LEVEL(s.join('\n'));
     this.g = new GRAPHICS();
-    this.g.go();
     this.g.draw(l);
   };
 </script>
