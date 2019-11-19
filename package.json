@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
+    "dev": "webpack-dev-server",
     "webpack": "webpack"
   },
   "keywords": [],
@@ -14,8 +15,10 @@
     "@babel/core": "^7.7.2",
     "@babel/preset-env": "^7.7.1",
     "babel-loader": "^8.0.6",
+    "html-webpack-plugin": "^4.0.0-beta.11",
     "mocha": "^6.2.2",
     "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.10"
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.9.0"
   }
 }
