@@ -39,7 +39,7 @@ class GRAPHICS {
     this.display.setNametable(28, 8, PATTERN('letterE'));
     this.display.setNametable(29, 8, PATTERN('letterL'));
 
-    this.display.setNametable(29, 10, PATTERN('letterO'));
+    this.display.setNametable(29, 10, PATTERN('number0'));
 
     this.display.setNametable(25, 13, PATTERN('letterM'));
     this.display.setNametable(26, 13, PATTERN('letterO'));
@@ -47,7 +47,7 @@ class GRAPHICS {
     this.display.setNametable(28, 13, PATTERN('letterE'));
     this.display.setNametable(29, 13, PATTERN('letterS'));
 
-    this.display.setNametable(29, 15, PATTERN('letterO'));
+    //this.display.setNametable(29, 15, PATTERN('letterO'));
 
     this.display.setNametable(25, 18, PATTERN('letterI'));
     this.display.setNametable(26, 18, PATTERN('letterT'));
@@ -55,7 +55,7 @@ class GRAPHICS {
     this.display.setNametable(28, 18, PATTERN('letterM'));
     this.display.setNametable(29, 18, PATTERN('letterS'));
 
-    this.display.setNametable(29, 20, PATTERN('letterO'));
+    this.display.setNametable(29, 20, PATTERN('number0'));
 
     for (let i = 12; i < 15; i++) {
       for (let j = 4; j < 11; j++) {
@@ -66,6 +66,13 @@ class GRAPHICS {
   draw(level) {
     this.debug(level);
     const levelSize = level.dim;
+
+    if(howManyMoves > 9) {
+      this.display.setNametable(28, 15, PATTERN('number0') + Math.floor(howManyMoves / 10));
+    } else {
+      this.display.setNametable(28, 15, PATTERN('blackTile'));
+    }
+    this.display.setNametable(29, 15, PATTERN('number0') + (howManyMoves % 10));
 
     for (let row = 0; row < levelSize; row++) {
       for (let col = 0; col < levelSize; col++) {
@@ -158,9 +165,12 @@ class GRAPHICS {
   }
 };
 
+// these are all the variables that go in that 2K of ram I guess
 let gamestate = 'wait';
 let direction = '';
 let framesLeftToMove = 0;
+let howManyMoves = 0;
+
 const FRAMEDELAY = 1;
 
 function gameLoop(time) {
@@ -206,41 +216,20 @@ function gameLoop(time) {
   window.g.draw(window.l);
 */
 
-window.pushUp = () => {
+function tryMove(which) {
   if (gamestate === 'moving') {
     return;
   }
+  howManyMoves++;
   framesLeftToMove = FRAMEDELAY;
-  direction = 'up';
+  direction = which;
   gamestate = 'moving';
 }
 
-window.pushLeft = () => {
-  if (gamestate === 'moving') {
-    return;
-  }
-  framesLeftToMove = FRAMEDELAY;
-  direction = 'left';
-  gamestate = 'moving';
-}
-
-window.pushRight = () => {
-  if (gamestate === 'moving') {
-    return;
-  }
-  framesLeftToMove = FRAMEDELAY;
-  direction = 'right';
-  gamestate = 'moving';
-}
-
-window.pushDown = () => {
-  if (gamestate === 'moving') {
-    return;
-  }
-  framesLeftToMove = FRAMEDELAY;
-  direction = 'down';
-  gamestate = 'moving';
-}
+window.pushUp    = () => tryMove('up');
+window.pushLeft  = () => tryMove('left');
+window.pushRight = () => tryMove('right');
+window.pushDown  = () => tryMove('down');
 
 window.onload = () => {
   const s = [
