@@ -158,24 +158,88 @@ class GRAPHICS {
   }
 };
 
-window.pushUp = () => {
+let gamestate = 'wait';
+let direction = '';
+let framesLeftToMove = 0;
+const FRAMEDELAY = 1;
+
+function gameLoop(time) {
+  window.requestAnimationFrame(gameLoop);
+
+  if (gamestate === 'moving') {
+    framesLeftToMove--;
+    if(framesLeftToMove > 0) {
+      return;
+    }
+
+    let stillMoving = false;
+
+    switch (direction) {
+      case 'up':
+        stillMoving = window.l.stepUp();
+        framesLeftToMove = FRAMEDELAY;
+        break;
+      case 'down':
+        stillMoving = window.l.stepDown();
+        framesLeftToMove = FRAMEDELAY;
+        break;
+      case 'left':
+        stillMoving = window.l.stepLeft();
+        framesLeftToMove = FRAMEDELAY;
+        break;
+      case 'right':
+        stillMoving = window.l.stepRight();
+        framesLeftToMove = FRAMEDELAY;
+        break;
+    }
+    
+    if (!stillMoving) {
+      gamestate = 'wait';
+    }
+  }
+
+  window.g.draw(window.l);
+}
+
+/*
   window.l.slideUp();
   window.g.draw(window.l);
+*/
+
+window.pushUp = () => {
+  if (gamestate === 'moving') {
+    return;
+  }
+  framesLeftToMove = FRAMEDELAY;
+  direction = 'up';
+  gamestate = 'moving';
 }
 
 window.pushLeft = () => {
-  window.l.slideLeft();
-  window.g.draw(window.l);
+  if (gamestate === 'moving') {
+    return;
+  }
+  framesLeftToMove = FRAMEDELAY;
+  direction = 'left';
+  gamestate = 'moving';
 }
 
 window.pushRight = () => {
-  window.l.slideRight();
-  window.g.draw(window.l);
+  if (gamestate === 'moving') {
+    return;
+  }
+  framesLeftToMove = FRAMEDELAY;
+  direction = 'right';
+  gamestate = 'moving';
 }
 
 window.pushDown = () => {
-  window.l.slideDown();
-  window.g.draw(window.l);
+  if (gamestate === 'moving') {
+    return;
+  }
+  framesLeftToMove = FRAMEDELAY;
+  direction = 'down';
+  gamestate = 'moving';
 }
 
 window.onload = () => {
@@ -194,5 +258,6 @@ window.onload = () => {
 
   window.l = new LEVEL(s.join('\n'));
   window.g = new GRAPHICS();
-  window.g.draw(window.l);
+  window.requestAnimationFrame(gameLoop);
+  //window.g.draw(window.l);
 };
