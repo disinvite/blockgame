@@ -1,6 +1,7 @@
 const { LEVEL } = require('../lib/level');
 const DISPLAY = require('../lib/display');
 const PATTERN = require('../src/pattern');
+const { solve } = require('../lib/solver');
 
 const palette  = [13, 10, 26, 42];
 const palette2 = [13, 3, 19, 35];
@@ -13,10 +14,16 @@ class GRAPHICS {
     this.setup();
   }
   debug(level) {
+    if (!levelChanged) {
+      return;
+    }
     const debugEl = document.getElementById('debug');
     let deText = 'LEVEL\n~~~~~\n\n' + level.tiles.map(x => x.map(y => y.padEnd(6, ' ')).join(' | ')).join('\n');
     deText += '\n\n\n\nMETASPRITES\n~~~~~~~~~~~\n\n' + level.metasprites.map(x => x.map(y => y.padEnd(6, ' ')).join(' | ')).join('\n');
+    // too slow for now
+    // deText += '\n\n\n\nSOLUTION\n~~~~~~~~\n\n' + solve(level, 10);
     debugEl.innerHTML = deText;
+    levelChanged = false;
   }
   // called once.
   setup() {
@@ -39,8 +46,6 @@ class GRAPHICS {
     this.display.setNametable(28, 8, PATTERN('letterE'));
     this.display.setNametable(29, 8, PATTERN('letterL'));
 
-    this.display.setNametable(29, 10, PATTERN('number0'));
-
     this.display.setNametable(25, 13, PATTERN('letterM'));
     this.display.setNametable(26, 13, PATTERN('letterO'));
     this.display.setNametable(27, 13, PATTERN('letterV'));
@@ -55,8 +60,6 @@ class GRAPHICS {
     this.display.setNametable(28, 18, PATTERN('letterM'));
     this.display.setNametable(29, 18, PATTERN('letterS'));
 
-    this.display.setNametable(29, 20, PATTERN('number0'));
-
     for (let i = 12; i < 15; i++) {
       for (let j = 4; j < 11; j++) {
         this.display.setAttribute(i, j, 1);
@@ -67,12 +70,19 @@ class GRAPHICS {
     this.debug(level);
     const levelSize = level.dim;
 
+    // level number
+    this.display.setNametable(29, 10, PATTERN('number0') + (whichLevel % 10));
+
+    // move counter
     if(howManyMoves > 9) {
       this.display.setNametable(28, 15, PATTERN('number0') + (Math.floor(howManyMoves / 10) % 10));
     } else {
       this.display.setNametable(28, 15, PATTERN('blackTile'));
     }
     this.display.setNametable(29, 15, PATTERN('number0') + (howManyMoves % 10));
+
+    // item counter
+    this.display.setNametable(29, 20, PATTERN('number0') + (itemsRemaining % 10));
 
     for (let row = 0; row < levelSize; row++) {
       for (let col = 0; col < levelSize; col++) {
@@ -170,6 +180,9 @@ let gamestate = 'wait';
 let direction = '';
 let framesLeftToMove = 0;
 let howManyMoves = 0;
+let whichLevel = 1;
+let itemsRemaining = 0;
+let levelChanged = true;
 
 const FRAMEDELAY = 1;
 
@@ -177,13 +190,13 @@ function gameLoop(time) {
   window.requestAnimationFrame(gameLoop);
 
   if (gamestate === 'moving') {
+    levelChanged = true;
     framesLeftToMove--;
     if(framesLeftToMove > 0) {
       return;
     }
 
     let stillMoving = false;
-
     switch (direction) {
       case 'up':
         stillMoving = window.l.stepUp();
@@ -203,6 +216,8 @@ function gameLoop(time) {
         break;
     }
     
+    itemsRemaining = window.l.diamonds;
+
     if (!stillMoving) {
       gamestate = 'wait';
     }
@@ -271,6 +286,7 @@ window.onload = () => {
   ];
 
   window.l = new LEVEL(s.join('\n'));
+  itemsRemaining = window.l.diamonds;
   window.g = new GRAPHICS();
   window.requestAnimationFrame(gameLoop);
   //window.g.draw(window.l);
