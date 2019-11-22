@@ -68,7 +68,7 @@ class GRAPHICS {
     const levelSize = level.dim;
 
     if(howManyMoves > 9) {
-      this.display.setNametable(28, 15, PATTERN('number0') + Math.floor(howManyMoves / 10));
+      this.display.setNametable(28, 15, PATTERN('number0') + (Math.floor(howManyMoves / 10) % 10));
     } else {
       this.display.setNametable(28, 15, PATTERN('blackTile'));
     }
@@ -221,6 +221,9 @@ function tryMove(which) {
     return;
   }
   howManyMoves++;
+  if (howManyMoves > 99) {
+    howManyMoves = 99;
+  }
   framesLeftToMove = FRAMEDELAY;
   direction = which;
   gamestate = 'moving';
