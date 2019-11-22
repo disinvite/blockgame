@@ -229,10 +229,32 @@ function tryMove(which) {
   gamestate = 'moving';
 }
 
-window.pushUp    = () => tryMove('up');
-window.pushLeft  = () => tryMove('left');
-window.pushRight = () => tryMove('right');
-window.pushDown  = () => tryMove('down');
+const fnUp    = () => tryMove('up');
+const fnLeft  = () => tryMove('left');
+const fnRight = () => tryMove('right');
+const fnDown  = () => tryMove('down');
+
+window.pushUp    = fnUp;
+window.pushLeft  = fnLeft;
+window.pushRight = fnRight;
+window.pushDown  = fnDown;
+
+window.addEventListener('keydown', evt => {
+  switch (evt.key) {
+    case 'ArrowUp':
+      fnUp();
+      break;
+    case 'ArrowLeft':
+      fnLeft();
+      break;
+    case 'ArrowRight':
+      fnRight();
+      break;
+    case 'ArrowDown':
+      fnDown();
+      break;
+  }
+});
 
 window.onload = () => {
   const s = [
