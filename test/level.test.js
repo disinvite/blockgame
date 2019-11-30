@@ -2,13 +2,6 @@ const assert = require('assert');
 const { LEVEL } = require('../lib/level');
 const testcase = require('./testcase');
 
-describe('buildShapeList', () => {
-  it('should work', () => {
-    const x = new LEVEL(testcase.shape_simple_before);
-    assert.deepEqual(x.buildShapeList(), ['A']);
-  });
-});
-
 describe('steps', () => {
   it('should work for this simple case', () => {
     const x = new LEVEL(testcase.step_down_simple_before);
