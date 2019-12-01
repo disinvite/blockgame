@@ -120,6 +120,18 @@ describe('slides', () => {
     const y = new LEVEL(testcase.two_shapes_after_slide);
     assert.ok(x.toString() === y.toString());
   });
+  it('should work for diamond falling case', () => {
+    const x = new LEVEL(testcase.falling_things_before);
+    x.slideDown();
+    const y = new LEVEL(testcase.falling_things_after);
+    assert.ok(x.toString() === y.toString());
+  });
+  it('should work for diamonds falling on both sides of a shape', () => {
+    const x = new LEVEL(testcase.both_sides_of_shape_before);
+    x.slideDown();
+    const y = new LEVEL(testcase.both_sides_of_shape_after);
+    assert.ok(x.toString() === y.toString());
+  });
 });
 
 describe('goal', () => {

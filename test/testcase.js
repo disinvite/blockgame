@@ -86,6 +86,44 @@ A...
 ....
 `;
 
+// slide down before
+const falling_things_before = [
+'$$$$$',
+'.... ', 
+'... .',
+'.. ..',
+'. ...'
+].join('\n');
+
+// slide down after
+const falling_things_after = [
+'....$',
+'...$ ', 
+'..$ .',
+'.$ ..',
+'$ ...'
+].join('\n');
+
+// slide down before
+const both_sides_of_shape_before = [
+'$$$$$$',
+'AA...B', 
+'.AA. B',
+' .$.$$',
+'.....$',
+'......'
+].join('\n');
+
+// slide down after
+const both_sides_of_shape_after = [
+'......',
+'$$..$$', 
+'AA$. B',
+' AA..B',
+'.....$',
+'..$$$$'
+].join('\n');
+
 const shape_tetris_cant_move = `
 .AA
 AA 
@@ -151,6 +189,10 @@ module.exports = {
  stacked_shapes_cant_move_bottom,
  stacked_shapes_cant_move_hook,
  stacked_shapes_try_to_break_it,
+ falling_things_before,
+ falling_things_after,
+ both_sides_of_shape_before,
+ both_sides_of_shape_after,
  shape_tetris_cant_move,
  rotate_position_one,
  rotate_position_two,
