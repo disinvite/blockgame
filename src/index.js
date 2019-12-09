@@ -1,7 +1,7 @@
 const { LEVEL } = require('../lib/level');
 const DISPLAY = require('../lib/display');
 const PATTERN = require('../src/pattern');
-const { solve } = require('../lib/solver');
+const { solve, getMeTheSolverFunction } = require('../lib/solver');
 
 const palette  = [13, 10, 26, 42];
 const palette2 = [13, 3, 19, 35];
@@ -20,8 +20,7 @@ class GRAPHICS {
     const debugEl = document.getElementById('debug');
     let deText = 'LEVEL\n~~~~~\n\n' + level.tiles.map(x => x.map(y => y.padEnd(6, ' ')).join(' | ')).join('\n');
     deText += '\n\n\n\nMETASPRITES\n~~~~~~~~~~~\n\n' + level.metasprites.map(x => x.map(y => y.padEnd(6, ' ')).join(' | ')).join('\n');
-    // too slow for now
-    // deText += '\n\n\n\nSOLUTION\n~~~~~~~~\n\n' + solve(level, 10);
+    deText += '\n\n\n\nSOLUTION\n~~~~~~~~\n\n' + window.solution[level.toString()];
     debugEl.innerHTML = deText;
     levelChanged = false;
   }
@@ -83,6 +82,9 @@ class GRAPHICS {
 
     // item counter
     this.display.setNametable(29, 20, PATTERN('number0') + (itemsRemaining % 10));
+
+    const ntStartX = (10 - (2*Math.ceil(levelSize*0.5)));
+    const ntStartY = ntStartX; // change if levels aren't square
 
     for (let row = 0; row < levelSize; row++) {
       for (let col = 0; col < levelSize; col++) {
@@ -146,11 +148,11 @@ class GRAPHICS {
             sprBottomRight = PATTERN('blockInterior');
           }
 
-          this.display.setNametable(2 + (2*col), 4 + (2*row), sprTopLeft);
-          this.display.setNametable(2 + 1 + (2*col), 4 + (2*row), sprTopRight);
-          this.display.setNametable(2 + (2 * col), 4 + 1 + (2*row), sprBottomLeft);
-          this.display.setNametable(2 + 1 + (2*col), 4 + 1 + (2*row), sprBottomRight);
-          this.display.setAttribute(1 + col, 2 + row, 1);
+          this.display.setNametable(ntStartX + 2 + (2*col), ntStartY + 4 + (2*row), sprTopLeft);
+          this.display.setNametable(ntStartX + 2 + 1 + (2*col), ntStartY + 4 + (2*row), sprTopRight);
+          this.display.setNametable(ntStartX + 2 + (2 * col), ntStartY + 4 + 1 + (2*row), sprBottomLeft);
+          this.display.setNametable(ntStartX + 2 + 1 + (2*col), ntStartY + 4 + 1 + (2*row), sprBottomRight);
+          this.display.setAttribute((ntStartX*0.5)+ 1 + col, (ntStartY*0.5)+ 2 + row, 1);
 
         } else {
           let xTile = '';
@@ -162,11 +164,11 @@ class GRAPHICS {
             xTile = PATTERN('twoTile');
           }
 
-          this.display.setNametable(2 + (2*col), 4 + (2*row), xTile);
-          this.display.setNametable(2 + 1 + (2*col), 4 + (2*row), xTile);
-          this.display.setNametable(2 + (2 * col), 4 + 1 + (2*row), xTile);
-          this.display.setNametable(2 + 1 + (2*col), 4 + 1 + (2*row), xTile);
-          this.display.setAttribute(1 + col, 2 + row, 0);
+          this.display.setNametable(ntStartX + 2 + (2*col), ntStartY + 4 + (2*row), xTile);
+          this.display.setNametable(ntStartX + 2 + 1 + (2*col), ntStartY + 4 + (2*row), xTile);
+          this.display.setNametable(ntStartX + 2 + (2 * col), ntStartY + 4 + 1 + (2*row), xTile);
+          this.display.setNametable(ntStartX + 2 + 1 + (2*col), ntStartY + 4 + 1 + (2*row), xTile);
+          this.display.setAttribute((ntStartX*0.5)+1 + col, (ntStartY*0.5)+2 + row, 0);
         }
       }
     }
@@ -226,11 +228,6 @@ function gameLoop(time) {
   window.g.draw(window.l);
 }
 
-/*
-  window.l.slideUp();
-  window.g.draw(window.l);
-*/
-
 function tryMove(which) {
   if (gamestate === 'moving') {
     return;
@@ -273,6 +270,13 @@ window.addEventListener('keydown', evt => {
 
 window.onload = () => {
   const s = [
+    '$  ^',
+    '...A',
+    'B  .',
+    '.  .'
+  ];
+
+  const t = [
     '..... . A^',
     '......... ',
     '......C$. ',
@@ -286,8 +290,8 @@ window.onload = () => {
   ];
 
   window.l = new LEVEL(s.join('\n'));
+  window.solution = getMeTheSolverFunction(window.l);
   itemsRemaining = window.l.diamonds;
   window.g = new GRAPHICS();
   window.requestAnimationFrame(gameLoop);
-  //window.g.draw(window.l);
 };
