@@ -1,5 +1,6 @@
 const { LEVEL } = require('../lib/level');
 const DISPLAY = require('../lib/display');
+const PPU = require('../lib/ppu');
 const PATTERN = require('../src/pattern');
 const { solve, getMeTheSolverFunction } = require('../lib/solver');
 
@@ -8,9 +9,9 @@ const palette2 = [13, 3, 19, 35];
 
 class GRAPHICS {
   constructor() {
-    this.display = new DISPLAY();
-    this.display.palettes = [palette, palette2, palette, palette];
-    this.display.patterntable = PATTERN.PATTERNTABLE;
+    this.display = new PPU(PATTERN.PATTERNTABLE);
+    this.display.bgPalettes = [palette, palette2, palette, palette];
+    this.screen = new DISPLAY();
     this.setup();
   }
   debug(level) {
@@ -173,7 +174,8 @@ class GRAPHICS {
       }
     }
 
-    this.display.draw();
+    this.display.frame();
+    this.screen.draw(this.display.offscreen);
   }
 };
 
@@ -289,7 +291,7 @@ window.onload = () => {
     '..........',
   ];
 
-  window.l = new LEVEL(s.join('\n'));
+  window.l = new LEVEL(t.join('\n'));
   window.solution = getMeTheSolverFunction(window.l);
   itemsRemaining = window.l.diamonds;
   window.g = new GRAPHICS();
