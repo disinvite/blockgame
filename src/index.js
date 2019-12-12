@@ -3,6 +3,7 @@ const DISPLAY = require('../lib/display');
 const PPU = require('../lib/ppu');
 const PATTERN = require('../src/pattern');
 const { solve, getMeTheSolverFunction } = require('../lib/solver');
+const blockMetaSpriteLookup = require('../src/blockMetasprite');
 
 const palette  = [13, 10, 26, 42];
 const palette2 = [13, 3, 19, 35];
@@ -94,60 +95,10 @@ class GRAPHICS {
         if ((tile === 'A') || (tile === 'B') || (tile === 'C')) {
           const metaInfo = level.metasprites[row][col].split('~')[1];
 
-          // idiomatic, yes. but also idiotic
-          const hasU = (metaInfo.indexOf('U') !== -1);
-          const hasD = (metaInfo.indexOf('D') !== -1);
-          const hasL = (metaInfo.indexOf('L') !== -1);
-          const hasR = (metaInfo.indexOf('R') !== -1);
-          
-          let sprTopLeft;
-          let sprTopRight;
-          let sprBottomLeft;
-          let sprBottomRight;
-
-          // top left
-          if(hasU && hasL) {
-            sprTopLeft = PATTERN('blockTopLeft');
-          } else if (!hasU && hasL) {
-            sprTopLeft = PATTERN('blockLeftCenter');
-          } else if (hasU && !hasL) {
-            sprTopLeft = PATTERN('blockTopCenter');
-          } else {
-            sprTopLeft = PATTERN('blockInterior');
-          }
-
-          // top right
-          if(hasU && hasR) {
-            sprTopRight = PATTERN('blockTopRight');
-          } else if (!hasU && hasR) {
-            sprTopRight = PATTERN('blockRightCenter');
-          } else if (hasU && !hasR) {
-            sprTopRight = PATTERN('blockTopCenter');
-          } else {
-            sprTopRight = PATTERN('blockInterior');
-          }
-
-          // bottom left
-          if(hasD && hasL) {
-            sprBottomLeft = PATTERN('blockBottomLeft');
-          } else if (!hasD && hasL) {
-            sprBottomLeft = PATTERN('blockLeftCenter');
-          } else if (hasD && !hasL) {
-            sprBottomLeft = PATTERN('blockBottomCenter');
-          } else {
-            sprBottomLeft = PATTERN('blockInterior');
-          }
-
-          // bottom right
-          if(hasD && hasR) {
-            sprBottomRight = PATTERN('blockBottomRight');
-          } else if (!hasD && hasR) {
-            sprBottomRight = PATTERN('blockRightCenter');
-          } else if (hasD && !hasR) {
-            sprBottomRight = PATTERN('blockBottomCenter');
-          } else {
-            sprBottomRight = PATTERN('blockInterior');
-          }
+          [sprTopLeft,
+          sprTopRight,
+          sprBottomLeft,
+          sprBottomRight] = blockMetaSpriteLookup[metaInfo].map(x => PATTERN(x));
 
           this.display.setNametable(ntStartX + 2 + (2*col), ntStartY + 4 + (2*row), sprTopLeft);
           this.display.setNametable(ntStartX + 2 + 1 + (2*col), ntStartY + 4 + (2*row), sprTopRight);
